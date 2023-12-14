@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      copy_with_extension_gen:
+        enabled: true
+        options:
+          copy_with_null: true
+          skip_fields: true
+      json_serializable:
+        options:
+          any_map: true
+          explicit_to_json: true
+          create_to_json: false
