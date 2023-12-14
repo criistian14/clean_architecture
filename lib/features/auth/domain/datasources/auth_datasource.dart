@@ -5,6 +5,6 @@ mixin AuthRemoteDataSource {
 }
 
 mixin AuthLocalDataSource {
-  Future<bool> saveUserCredentials(String email, String password);
-  Future<String> getToken();
+  Future<void> saveUserCredentials(String email, String password);
+  Future<(String, String)> getCredentials();
 }

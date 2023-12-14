@@ -16,6 +16,8 @@ abstract class _$LoginStateCWProxy {
   LoginState call({
     LoginStatus? status,
     Exception? error,
+    String? emailSaved,
+    String? passwordSaved,
   });
 }
 
@@ -36,6 +38,8 @@ class _$LoginStateCWProxyImpl implements _$LoginStateCWProxy {
   LoginState call({
     Object? status = const $CopyWithPlaceholder(),
     Object? error = const $CopyWithPlaceholder(),
+    Object? emailSaved = const $CopyWithPlaceholder(),
+    Object? passwordSaved = const $CopyWithPlaceholder(),
   }) {
     return LoginState(
       status: status == const $CopyWithPlaceholder() || status == null
@@ -46,6 +50,14 @@ class _$LoginStateCWProxyImpl implements _$LoginStateCWProxy {
           ? _value.error
           // ignore: cast_nullable_to_non_nullable
           : error as Exception?,
+      emailSaved: emailSaved == const $CopyWithPlaceholder()
+          ? _value.emailSaved
+          // ignore: cast_nullable_to_non_nullable
+          : emailSaved as String?,
+      passwordSaved: passwordSaved == const $CopyWithPlaceholder()
+          ? _value.passwordSaved
+          // ignore: cast_nullable_to_non_nullable
+          : passwordSaved as String?,
     );
   }
 }
@@ -63,10 +75,14 @@ extension $LoginStateCopyWith on LoginState {
   /// ````
   LoginState copyWithNull({
     bool error = false,
+    bool emailSaved = false,
+    bool passwordSaved = false,
   }) {
     return LoginState(
       status: status,
       error: error == true ? null : this.error,
+      emailSaved: emailSaved == true ? null : this.emailSaved,
+      passwordSaved: passwordSaved == true ? null : this.passwordSaved,
     );
   }
 }

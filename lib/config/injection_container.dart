@@ -1,7 +1,8 @@
 import 'package:clean_architecture/features/auth/auth.dart';
-import 'package:clean_architecture/features/shared/helpers/network_info.dart';
-import 'package:clean_architecture/features/shared/providers/error_wrapper_cubit.dart';
+import 'package:clean_architecture/features/shared/shared.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 
 final sl = GetIt.instance;
 
@@ -11,7 +12,13 @@ Future<void> init() async {
 
   //! Use cases
   sl.registerLazySingleton(
-    () => LoginUserUseCase(authRepository: sl()),
+    () => LoginUserUseCase(
+      repository: sl(),
+      nativeUtils: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetCredentialsUserUseCase(repository: sl()),
   );
 
   //! Repositories
@@ -25,18 +32,35 @@ Future<void> init() async {
 
   //! Data sources
   sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(),
+    () => AuthLocalDataSourceImpl(
+      hiveBox: sl(),
+    ),
   );
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(),
   );
 
   //! Libraries
+  sl.registerLazySingleton(() => const FlutterSecureStorage());
+  sl.registerLazySingleton<HiveInterface>(() => Hive);
 
   //! Helpers
   sl.registerLazySingleton<NetworkInfo>(
     () => NetworkInfoImpl(),
   );
+  sl.registerLazySingleton(
+    () => HiveBoxService(
+      secureStorage: sl(),
+      hive: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => NativeUtils());
+
+  //! Hive
+  final hiveBoxService = sl<HiveBoxService>();
+  final authBox = await hiveBoxService.openEncryptedBox('auth');
+
+  sl.registerLazySingleton<Box>(() => authBox);
 }
 
 void _initBlocs() {
@@ -45,6 +69,9 @@ void _initBlocs() {
   );
 
   sl.registerFactory(
-    () => LoginBloc(loginUserUseCase: sl()),
+    () => LoginBloc(
+      loginUserUseCase: sl(),
+      getCredentialsUserUseCase: sl(),
+    ),
   );
 }

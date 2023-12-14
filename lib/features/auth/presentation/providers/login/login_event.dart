@@ -19,3 +19,17 @@ class LoginPressedButton extends LoginEvent {
         password,
       ];
 }
+
+class LoginReset extends LoginEvent {
+  const LoginReset();
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoginGetCredentials extends LoginEvent {
+  const LoginGetCredentials();
+
+  @override
+  List<Object> get props => [];
+}

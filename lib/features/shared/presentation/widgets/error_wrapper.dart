@@ -1,8 +1,6 @@
 import 'package:clean_architecture/config/base_errors.dart';
 import 'package:clean_architecture/features/auth/infrastructure/errors/login_errors.dart';
-import 'package:clean_architecture/features/shared/errors/default_errors.dart';
-import 'package:clean_architecture/features/shared/errors/internet_errors.dart';
-import 'package:clean_architecture/features/shared/providers/error_wrapper_cubit.dart';
+import 'package:clean_architecture/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,6 +15,14 @@ extension ErrorSnackbarBaseExtension on ErrorSnackbarBase {
     } else {
       return toString();
     }
+  }
+
+  bool get shouldTranslate {
+    if (this is CustomError) {
+      return (this as CustomError).shouldTranslate;
+    }
+
+    return false;
   }
 }
 
@@ -47,6 +53,11 @@ class WrapError extends StatelessWidget {
         // * Show snack bar
         if (error is ErrorSnackbarBase) {
           String message = error.messageToShow;
+
+          // ? Translate message
+          if (error.shouldTranslate) {
+            // message = context.translate(message);
+          }
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

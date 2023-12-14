@@ -1,5 +1,6 @@
 export 'domain/datasources/auth_datasource.dart';
 export 'domain/repositories/auth_repository.dart';
+export 'domain/usecases/get_credentials_user_usecase.dart';
 export 'domain/usecases/login_user_usecase.dart';
 export 'infrastructure/local_datasources/auth_local_datasource.dart';
 export 'infrastructure/remote_datasources/auth_remote_datasource.dart';

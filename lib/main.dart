@@ -1,10 +1,18 @@
 import 'package:clean_architecture/config/injection_container.dart' as di;
 import 'package:clean_architecture/features/auth/presentation/pages/login/login_page.dart';
-import 'package:clean_architecture/features/shared/providers/error_wrapper_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'features/shared/shared.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final path = await getApplicationDocumentsDirectory();
+  Hive.init(path.path);
+
   await di.init();
 
   runApp(const MyApp());

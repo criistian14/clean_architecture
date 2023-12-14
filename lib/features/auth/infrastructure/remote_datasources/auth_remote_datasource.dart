@@ -2,8 +2,7 @@ import 'package:clean_architecture/features/auth/domain/datasources/auth_datasou
 import 'package:clean_architecture/features/auth/domain/entities/user.dart';
 import 'package:clean_architecture/features/auth/infrastructure/errors/login_errors.dart';
 import 'package:clean_architecture/features/auth/infrastructure/models/user_model.dart';
-import 'package:clean_architecture/features/shared/errors/default_errors.dart';
-import 'package:clean_architecture/features/shared/errors/internet_errors.dart';
+import 'package:clean_architecture/features/shared/shared.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
@@ -44,9 +43,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return user;
 
       // * Errors handling
-    } on ConnectionTimeout catch (e) {
+    } on ConnectionTimeout catch (_) {
       rethrow;
-    } on LoginWrongCredentials catch (e) {
+    } on LoginWrongCredentials catch (_) {
       rethrow;
     } catch (e) {
       throw CustomError(e.toString());

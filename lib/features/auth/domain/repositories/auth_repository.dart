@@ -1,11 +1,14 @@
-import 'package:multiple_result/multiple_result.dart';
+import 'package:clean_architecture/config/typedef.dart';
 
 import '../entities/user.dart';
 
 mixin AuthRepository {
-  Future<Result<User, Exception>> login(String email, String password);
-  Future<Result<bool, Exception>> saveUserCredentials(
+  ResultFuture<User> login(String email, String password);
+
+  ResultVoid saveUserCredentials(
     String email,
     String password,
   );
+
+  ResultFuture<(String, String)> getCredentials();
 }

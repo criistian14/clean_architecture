@@ -1,7 +1,6 @@
 import 'package:clean_architecture/features/auth/presentation/providers/login/login_bloc.dart';
 import 'package:clean_architecture/features/services/presentation/pages/home/home_page.dart';
-import 'package:clean_architecture/features/shared/providers/error_wrapper_cubit.dart';
-import 'package:clean_architecture/features/shared/widgets/error_wrapper.dart';
+import 'package:clean_architecture/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,28 +19,46 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     final status = context.select((LoginBloc bloc) => bloc.state.status);
 
-    return BlocListener<LoginBloc, LoginState>(
-      listenWhen: (previous, current) =>
-          previous.status != current.status || previous.error != current.error,
-      listener: (context, state) {
-        /// * Navegar al [HomePage]
-        if (state.status == LoginStatus.success) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-          );
-        }
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginBloc, LoginState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status ||
+              previous.error != current.error,
+          listener: (context, state) {
+            /// * Navegar al [HomePage]
+            if (state.status == LoginStatus.success) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              ).then((value) {
+                context.read<LoginBloc>().add(const LoginReset());
+                context.read<LoginBloc>().add(const LoginGetCredentials());
+              });
+            }
 
-        if (state.error == null) {
-          context.read<ErrorWrapperCubit>().hideError();
-        }
+            if (state.error == null) {
+              context.read<ErrorWrapperCubit>().hideError();
+            }
 
-        if (state.status == LoginStatus.failure && state.error != null) {
-          context.read<ErrorWrapperCubit>().showError(state.error!);
-        }
-      },
+            if (state.status == LoginStatus.failure && state.error != null) {
+              context.read<ErrorWrapperCubit>().showError(state.error!);
+            }
+          },
+        ),
+
+        // * Acciones con el formulario
+        BlocListener<LoginBloc, LoginState>(
+          listenWhen: (previous, current) =>
+              current.status == LoginStatus.initial,
+          listener: (context, state) {
+            emailCtrl.clear();
+            passwordCtrl.clear();
+          },
+        ),
+      ],
       child: WrapError(
         onRetry: () {
           context.read<LoginBloc>().add(

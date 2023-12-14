@@ -1,15 +1,13 @@
+import 'package:clean_architecture/config/typedef.dart';
 import 'package:clean_architecture/features/auth/domain/datasources/auth_datasource.dart';
 import 'package:clean_architecture/features/auth/domain/entities/user.dart';
 import 'package:clean_architecture/features/auth/domain/repositories/auth_repository.dart';
-import 'package:clean_architecture/features/shared/errors/default_errors.dart';
-import 'package:clean_architecture/features/shared/errors/internet_errors.dart';
-import 'package:clean_architecture/features/shared/helpers/network_info.dart';
-import 'package:multiple_result/multiple_result.dart';
+import 'package:clean_architecture/features/shared/shared.dart';
 
 import '../errors/login_errors.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl({
+  const AuthRepositoryImpl({
     required NetworkInfo networkInfo,
     required AuthLocalDataSource localDataSource,
     required AuthRemoteDataSource remoteDataSource,
@@ -22,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
 
   @override
-  Future<Result<User, Exception>> login(
+  ResultFuture<User> login(
     String email,
     String password,
   ) async {
@@ -49,7 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<bool, Exception>> saveUserCredentials(
+  ResultVoid saveUserCredentials(
     String email,
     String password,
   ) async {
@@ -58,6 +56,23 @@ class AuthRepositoryImpl implements AuthRepository {
         email,
         password,
       );
+
+      return Success(result);
+
+      // * Errors handling
+    } on CustomError catch (e) {
+      return Error(e);
+    } catch (e) {
+      return Error(
+        CustomError(e.toString()),
+      );
+    }
+  }
+
+  @override
+  ResultFuture<(String, String)> getCredentials() async {
+    try {
+      final result = await _localDataSource.getCredentials();
 
       return Success(result);
 
