@@ -65,7 +65,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginGetCredentials event,
     Emitter<LoginState> emit,
   ) async {
-    final getCredentialsUserCall = await _getCredentialsUserUseCase(NoParams());
+    final getCredentialsUserCall =
+        await _getCredentialsUserUseCase(const NoParams());
 
     getCredentialsUserCall.when(
       (success) {

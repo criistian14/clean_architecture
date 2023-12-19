@@ -1,4 +1,5 @@
 import 'package:clean_architecture/config/injection_container.dart' as di;
+import 'package:clean_architecture/config/usecase.dart';
 import 'package:clean_architecture/features/auth/presentation/pages/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,9 @@ Future<void> main() async {
   Hive.init(path.path);
 
   await di.init();
+
+  final loadConfigCall = di.sl<LoadRemoteConfigUseCase>();
+  await loadConfigCall(const NoParams());
 
   runApp(const MyApp());
 }

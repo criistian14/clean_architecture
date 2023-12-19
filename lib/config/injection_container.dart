@@ -3,6 +3,7 @@ import 'package:clean_architecture/features/shared/shared.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 
 final sl = GetIt.instance;
 
@@ -20,10 +21,20 @@ Future<void> init() async {
   sl.registerLazySingleton(
     () => GetCredentialsUserUseCase(repository: sl()),
   );
+  sl.registerLazySingleton(
+    () => LoadRemoteConfigUseCase(repository: sl()),
+  );
 
   //! Repositories
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
+      networkInfo: sl(),
+      localDataSource: sl(),
+      remoteDataSource: sl(),
+    ),
+  );
+  sl.registerLazySingleton<ConfigQuickerRepository>(
+    () => ConfigQuickerRepositoryImpl(
       networkInfo: sl(),
       localDataSource: sl(),
       remoteDataSource: sl(),
@@ -39,10 +50,19 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(),
   );
+  sl.registerLazySingleton<ConfigQuickerLocalDataSource>(
+    () => ConfigQuickerLocalDataSourceImpl(
+      box: sl(),
+    ),
+  );
+  sl.registerLazySingleton<ConfigQuickerRemoteDataSource>(
+    () => ConfigQuickerRemoteDataSourceImpl(),
+  );
 
   //! Libraries
   sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton<HiveInterface>(() => Hive);
+  sl.registerLazySingleton(() => http.Client());
 
   //! Helpers
   sl.registerLazySingleton<NetworkInfo>(
